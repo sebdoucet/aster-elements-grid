@@ -1,0 +1,23 @@
+:host {
+    display: block;
+}
+
+main {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas: "table" "pagination";
+}
+
+.table {
+    grid-area: table;
+}
+
+.pagination {
+    grid-area: pagination;
+}
+
+::slotted(*) {
+    border-collapse: collapse;
+    box-sizing: border-box;
+    width: 100%;
+}

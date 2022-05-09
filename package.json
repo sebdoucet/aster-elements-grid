@@ -1,0 +1,50 @@
+{
+  "name": "@aster/grid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "tsc && rollup -c",
+    "debug": "tsc --project tests/tsconfig.json && rollup -c tests/rollup.config.js && karma start karma.debug.js",
+    "test": "tsc --project tests/tsconfig.json && rollup -c tests/rollup.config.js && karma start",
+    "demo": "copyfiles -f node_modules/@vscode/codicons/dist/codicon.svg .bin& tsc --project demo/tsconfig.json && rollup -c demo/rollup.config.js"
+  },
+  "author": "sebdoucet",
+  "license": "ISC",
+  "dependencies": {
+    "@aster-js/core": "^1.2.4",
+    "@aster-js/dom": "^1.0.2",
+    "@aster-js/events": "^1.0.2",
+    "@aster-js/ioc": "^1.0.0",
+    "@aster-js/iterators": "^1.0.2",
+    "lit": "^2.2.3",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-alias": "^3.1.9",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-multi-entry": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@types/chai": "4.3.0",
+    "@types/mocha": "9.1.0",
+    "@types/sinon": "10.0.9",
+    "@vscode/codicons": "0.0.27",
+    "chai": "4.3.6",
+    "copyfiles": "^2.4.1",
+    "karma": "^6.3.12",
+    "karma-chai": "0.1.0",
+    "karma-chrome-launcher": "3.1.0",
+    "karma-mocha": "^2.0.1",
+    "karma-mocha-reporter": "2.2.5",
+    "karma-sinon": "1.0.5",
+    "mocha": "^9.2.0",
+    "puppeteer": "^13.1.3",
+    "rollup": "^2.66.1",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-import-css": "^3.0.2",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "sinon": "13.0.0",
+    "typescript": "^4.6.4"
+  }
+}
