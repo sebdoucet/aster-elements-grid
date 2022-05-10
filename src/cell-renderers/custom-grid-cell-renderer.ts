@@ -1,24 +1,21 @@
 import { ServiceContract } from "@aster-js/ioc";
 import { html } from "lit";
-import { ColumnDefinition } from "../column-definition";
+import { CustomColumnDefinition } from "../column-definition";
 import { IGridCellRenderer } from "../services/igrid-cell-renderer";
 import { IGridPropertyValueAccessor } from "../services/igrid-property-value-accessor";
 import { RenderResult } from "../services/render-result";
 
 @ServiceContract(IGridCellRenderer)
-export class DefaultGridCellRenderer implements IGridCellRenderer {
+export class CustomGridCellRenderer implements IGridCellRenderer {
 
-    readonly name: string = "text";
+    readonly name: string = "custom";
 
     constructor(
         @IGridPropertyValueAccessor private readonly _accessor: IGridPropertyValueAccessor
     ) { }
 
-    render(item: any, definition: ColumnDefinition): RenderResult {
+    render(item: any, definition: CustomColumnDefinition): RenderResult {
         const value = this._accessor.getValue(item, definition);
-        if (definition.formatter) {
-            return definition.formatter(value);
-        }
-        return html`${value}`;
+        return html`${definition.cellRenderer(value, item, definition)}`;
     }
 }

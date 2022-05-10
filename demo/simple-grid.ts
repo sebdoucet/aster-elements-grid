@@ -1,14 +1,15 @@
 import { css, html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
-import { NumberColumnDefinition } from "../src/cell-renderers/number-grid-cell-renderer";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { ColumnDefinition } from "../src/column-definition";
 
 import data from "./simple-data";
 
 const columns: ColumnDefinition[] = [
+    { type: "custom", header: "", cellRenderer: v => unsafeHTML(`&#x${v}`), property: "icon" },
     { type: "text", header: "Description", property: "description" },
     { type: "text", header: "Date", property: "date" },
-    { type: "number", header: "Price", property: "price", precision: 2, fixed: true, cellClasses: "price" } as NumberColumnDefinition
+    { type: "number", header: "Price", property: "price", precision: 2, fixed: true, cellClasses: "price" }
 ];
 
 @customElement("aster-simple-grid-demo")
@@ -24,6 +25,11 @@ export class SimpleGridDemo extends LitElement {
         }
     `;
     protected render(): unknown {
-        return html`<aster-grid .dataSource=${data} .columns=${columns} .pageSize=${2} auto-load></aster-grid>`;
+        return html`<aster-grid
+            .dataSource=${data}
+            .columns=${columns}
+            .pageSize=${2}
+            auto-load>
+        </aster-grid>`;
     }
 }

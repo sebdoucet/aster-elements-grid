@@ -2,8 +2,6 @@ import { html, HTMLTemplateResult, LitElement, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { IDisposable } from "@aster-js/core";
 import { dom } from "@aster-js/dom";
-import { ColumnDefinition } from "./column-definition";
-import { IGridCellRenderer } from "./services/igrid-cell-renderer";
 import { CellEvent } from "./grid-event";
 import { IGridCell } from "./abstraction/igrid-cell";
 import styles from "./grid-cell.css";
@@ -13,12 +11,6 @@ export class GridCell extends LitElement implements IGridCell {
     private _listeners: IDisposable[] = [];
 
     static readonly styles = unsafeCSS(styles);
-
-    @property()
-    renderer?: IGridCellRenderer;
-
-    @property()
-    column?: ColumnDefinition;
 
     @property()
     item: any;

@@ -1,28 +1,21 @@
 import { ServiceContract } from "@aster-js/ioc";
 import { html } from "lit";
-import { ColumnDefinition } from "../column-definition";
+import { NumberColumnDefinition } from "../column-definition";
 import { IGridCellRenderer } from "../services/igrid-cell-renderer";
+import { IGridPropertyValueAccessor } from "../services/igrid-property-value-accessor";
 import { RenderResult } from "../services/render-result";
-import { DefaultGridCellRenderer } from "./default-grid-cell-renderer";
-
-export type NumberColumnDefinition = ColumnDefinition & {
-    /** Indicate the precision, default will render the entire number */
-    readonly precision?: number;
-    /** Indicate whether or not the precision should render a formats a fixed-point notation */
-    readonly fixed?: boolean;
-    /** Indicate the unit to append at the end of the number */
-    readonly unit?: string;
-    /** Provide an alternate text for non number values */
-    readonly NaNText?: string;
-}
 
 @ServiceContract(IGridCellRenderer)
-export class NumberGridCellRenderer extends DefaultGridCellRenderer {
+export class NumberGridCellRenderer implements IGridCellRenderer {
 
     readonly name: string = "number";
 
+    constructor(
+        @IGridPropertyValueAccessor private readonly _accessor: IGridPropertyValueAccessor
+    ) { }
+
     render(item: any, definition: NumberColumnDefinition): RenderResult {
-        let value = this.getValue(item, definition);
+        let value = this._accessor.getValue(item, definition);
 
         if (typeof value === "number") {
             if (typeof definition.precision !== "undefined") {
