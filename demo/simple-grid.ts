@@ -6,10 +6,12 @@ import { ColumnDefinition } from "../src/column-definition";
 import data from "./simple-data";
 
 const columns: ColumnDefinition[] = [
-    { type: "custom", header: "", cellRenderer: v => unsafeHTML(`&#x${v}`), property: "icon" },
-    { type: "text", header: "Description", property: "description" },
-    { type: "text", header: "Date", property: "date" },
-    { type: "number", header: "Price", property: "price", precision: 2, fixed: true, cellClasses: "price" }
+    { type: "custom", header: "", cellRenderer: v => unsafeHTML(`&#x${v}`), path: "icon" },
+    { type: "text", header: "Description", path: "description" },
+    { type: "text", header: "Date", path: "date" },
+    { type: "text", header: "City", path: "address.city" },
+    { type: "number", header: "Price", path: "price", precision: 2, fixed: true, cellClasses: "price" },
+    { type: "number", header: "Rounded Price", path: "price", coerce: (v) => Math.round(v as number), precision: 2, fixed: true, cellClasses: "price" }
 ];
 
 @customElement("aster-simple-grid-demo")

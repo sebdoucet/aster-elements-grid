@@ -1,6 +1,6 @@
 import { ServiceContract } from "@aster-js/ioc";
 import { html } from "lit";
-import { NumberColumnDefinition } from "../column-definition";
+import { GridDataItem, NumberColumnDefinition } from "../column-definition";
 import { IGridCellRenderer } from "../services/igrid-cell-renderer";
 import { IGridPropertyValueAccessor } from "../services/igrid-property-value-accessor";
 import { RenderResult } from "../services/render-result";
@@ -14,7 +14,7 @@ export class NumberGridCellRenderer implements IGridCellRenderer {
         @IGridPropertyValueAccessor private readonly _accessor: IGridPropertyValueAccessor
     ) { }
 
-    render(item: any, definition: NumberColumnDefinition): RenderResult {
+    render(item: GridDataItem, definition: NumberColumnDefinition): RenderResult {
         let value = this._accessor.getValue(item, definition);
 
         if (typeof value === "number") {

@@ -8,6 +8,7 @@ import { IGridRowRenderer } from "./igrid-row-renderer";
 import { IGridController } from "./igrid-controller";
 import { RenderResult } from "./render-result";
 import { itemValue } from "../item-value";
+import { GridDataItem } from "../column-definition";
 
 @ServiceContract(IGridRowRenderer)
 export class GridRowRenderer implements IGridRowRenderer {
@@ -27,14 +28,14 @@ export class GridRowRenderer implements IGridRowRenderer {
         return html`${repeat(items, x => this.render(x))}`
     }
 
-    render(item: any): RenderResult {
+    render(item: GridDataItem): RenderResult {
         if (item) {
             return html`<tr>${this.renderCells(item)}</tr>`
         }
         return html``;
     }
 
-    protected *renderCells(item: any): Iterable<HTMLTemplateResult> {
+    protected *renderCells(item: GridDataItem): Iterable<HTMLTemplateResult> {
         for (const column of this._gridService.columns) {
             const renderer = this._cellRenderers.get(column.type ?? "text");
             if (renderer) {

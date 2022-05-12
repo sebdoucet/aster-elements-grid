@@ -2,29 +2,56 @@ import { Func } from "@aster-js/core";
 import { ItemValue } from "./item-value";
 import { RenderResult } from "./services/render-result";
 
-export type ColumnDefinition<T = any> =
-    TextColumnDefinition<T>
-    | NumberColumnDefinition<T>
-    | CustomColumnDefinition<T>;
+export type GridDataItem = { readonly [key: string]: unknown };
 
-export interface IColumnDefinition<T = any> {
-    readonly header: RenderResult;
-    readonly headerStyle?: string;
-    readonly headerClasses?: string;
-    readonly cellStyle?: ItemValue<T, string>;
-    readonly cellClasses?: ItemValue<T, string>;
-    readonly property: string;
-    readonly formatter?: Func<[T], RenderResult>;
+export type GridItemValueCoerceDelegate = (value: unknown, item: GridDataItem, definition: ColumnDefinition) => unknown;
+
+export type ColumnDefinition =
+    TextColumnDefinition
+    | NumberColumnDefinition
+    | CustomColumnDefinition;
+
+export namespace ColumnDefinition {
+    export function autoColumns(...properties: string[]): ColumnDefinition[] {
+        return properties.map(p => ({
+            type: "text",
+            header: p,
+            path: p
+        }));
+    }
+}
+
+export interface IColumnFeatureOptions {
     readonly allowSorting?: boolean;
     readonly allowFilter?: boolean;
     readonly allowEdit?: boolean;
 }
 
-export type TextColumnDefinition<T = any> = IColumnDefinition<T> & {
+export interface IColumnPropertyOptions {
+    /** Path to the value */
+    readonly path: string;
+    /** A default value used if the property is undefined, not having the good type or if null and `ignoreNull` is configured at true */
+    readonly defaultValue?: any;
+    /** Will fallback on default value if the value of the property is null */
+    readonly ignoreNull?: boolean;
+    /** Coerce the property value */
+    readonly coerce?: GridItemValueCoerceDelegate;
+}
+
+export interface IColumnDefinition extends IColumnFeatureOptions, IColumnPropertyOptions {
+    readonly header: RenderResult;
+    readonly headerStyle?: string;
+    readonly headerClasses?: string;
+    readonly cellStyle?: ItemValue<GridDataItem, string>;
+    readonly cellClasses?: ItemValue<GridDataItem, string>;
+    readonly formatter?: Func<[GridDataItem], RenderResult>;
+}
+
+export type TextColumnDefinition = IColumnDefinition & {
     readonly type: "text";
 }
 
-export type NumberColumnDefinition<T = any> = IColumnDefinition<T> & {
+export type NumberColumnDefinition = IColumnDefinition & {
     readonly type: "number";
     /** Indicate the precision, default will render the entire number */
     readonly precision?: number;
@@ -36,10 +63,10 @@ export type NumberColumnDefinition<T = any> = IColumnDefinition<T> & {
     readonly NaNText?: string;
 }
 
-export type CustomGridCellRendererDelegate<T = any> = (value: any, item: T, definition: CustomColumnDefinition<T>) => unknown;
+export type CustomGridCellRendererDelegate = (value: unknown, item: GridDataItem, definition: CustomColumnDefinition) => unknown;
 
-export type CustomColumnDefinition<T = any> = IColumnDefinition<T> & {
+export type CustomColumnDefinition = IColumnDefinition & {
     readonly type: "custom";
     /** Callback used to render the cell */
-    cellRenderer: CustomGridCellRendererDelegate<T>;
+    cellRenderer: CustomGridCellRendererDelegate;
 }

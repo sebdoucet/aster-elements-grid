@@ -5,6 +5,7 @@ import { dom } from "@aster-js/dom";
 import { CellEvent } from "./grid-event";
 import { IGridCell } from "./abstraction/igrid-cell";
 import styles from "./grid-cell.css";
+import { GridDataItem } from "./column-definition";
 
 @customElement("aster-grid-cell")
 export class GridCell extends LitElement implements IGridCell {
@@ -13,7 +14,7 @@ export class GridCell extends LitElement implements IGridCell {
     static readonly styles = unsafeCSS(styles);
 
     @property()
-    item: any;
+    item!: GridDataItem;
 
     connectedCallback(): void {
         super.connectedCallback();
