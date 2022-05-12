@@ -1,22 +1,14 @@
 import { ServiceContract } from "@aster-js/ioc";
-import { html } from "lit";
 import { GridDataItem, NumberColumnDefinition } from "../column-definition";
 import { IGridCellRenderer } from "../services/igrid-cell-renderer";
-import { IGridPropertyValueAccessor } from "../services/igrid-property-value-accessor";
-import { RenderResult } from "../services/render-result";
+import { GridCellRenderer } from "./grid-cell-renderer";
 
 @ServiceContract(IGridCellRenderer)
-export class NumberGridCellRenderer implements IGridCellRenderer {
+export class NumberGridCellRenderer extends GridCellRenderer {
 
     readonly name: string = "number";
 
-    constructor(
-        @IGridPropertyValueAccessor private readonly _accessor: IGridPropertyValueAccessor
-    ) { }
-
-    render(item: GridDataItem, definition: NumberColumnDefinition): RenderResult {
-        let value = this._accessor.getValue(item, definition);
-
+    protected renderValue(value: unknown, item: GridDataItem, definition: NumberColumnDefinition): unknown {
         if (typeof value === "number") {
             if (typeof definition.precision !== "undefined") {
                 if (definition.fixed) {
@@ -36,9 +28,6 @@ export class NumberGridCellRenderer implements IGridCellRenderer {
             value = definition.NaNText ?? "NaN";
         }
 
-        if (definition.formatter) {
-            return definition.formatter(value);
-        }
-        return html`${value}`;
+        return value;
     }
 }

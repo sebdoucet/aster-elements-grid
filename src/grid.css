@@ -20,4 +20,5 @@ main {
     border-collapse: collapse;
     box-sizing: border-box;
     width: 100%;
+    border-spacing: 0px;
 }

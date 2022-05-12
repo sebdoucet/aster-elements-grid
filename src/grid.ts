@@ -17,6 +17,7 @@ import { GridPaginationService } from "./services/grid-pagination-service";
 import styles from "./grid.css";
 import { GridPropertyValueAccessor } from "./services/grid-property-value-accessor";
 import { CustomGridCellRenderer } from "./cell-renderers/custom-grid-cell-renderer";
+import { HtmlGridCellRenderer } from "./cell-renderers/html-grid-cell-renderer";
 
 @customElement("aster-grid")
 export class Grid extends LitElement implements IGrid {
@@ -86,6 +87,7 @@ export class Grid extends LitElement implements IGrid {
             .addSingleton(GridColRenderer)
             .addSingleton(DefaultGridCellRenderer)
             .addSingleton(NumberGridCellRenderer)
+            .addSingleton(HtmlGridCellRenderer)
             .addSingleton(CustomGridCellRenderer)
             .addSingleton(GridRowRenderer)
             .addSingleton(GridPropertyValueAccessor)

@@ -6,10 +6,13 @@ export type GridDataItem = { readonly [key: string]: unknown };
 
 export type GridItemValueCoerceDelegate = (value: unknown, item: GridDataItem, definition: ColumnDefinition) => unknown;
 
+export type GridItemValueFormatterDelegate = (value: unknown, item: GridDataItem, definition: ColumnDefinition) => RenderResult;
+
 export type ColumnDefinition =
     TextColumnDefinition
     | NumberColumnDefinition
-    | CustomColumnDefinition;
+    | CustomColumnDefinition
+    | HtmlColumnDefinition;
 
 export namespace ColumnDefinition {
     export function autoColumns(...properties: string[]): ColumnDefinition[] {
@@ -44,7 +47,7 @@ export interface IColumnDefinition extends IColumnFeatureOptions, IColumnPropert
     readonly headerClasses?: string;
     readonly cellStyle?: ItemValue<GridDataItem, string>;
     readonly cellClasses?: ItemValue<GridDataItem, string>;
-    readonly formatter?: Func<[GridDataItem], RenderResult>;
+    readonly formatter?: GridItemValueFormatterDelegate;
 }
 
 export type TextColumnDefinition = IColumnDefinition & {
@@ -69,4 +72,9 @@ export type CustomColumnDefinition = IColumnDefinition & {
     readonly type: "custom";
     /** Callback used to render the cell */
     cellRenderer: CustomGridCellRendererDelegate;
+}
+
+
+export type HtmlColumnDefinition = IColumnDefinition & {
+    readonly type: "html";
 }

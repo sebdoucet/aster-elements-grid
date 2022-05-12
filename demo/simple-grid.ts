@@ -1,17 +1,20 @@
 import { css, html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { ColumnDefinition } from "../src/column-definition";
+import { ColumnDefinition, GridDataItem } from "../src/column-definition";
 
 import data from "./simple-data";
 
+function priceBgColor({ price }: GridDataItem) {
+    const color = typeof price !== "number" ? "black": price > 100 ? "red" : price < 10 ? "green" : "orange";
+    return `background-color:${color}`;
+}
+
 const columns: ColumnDefinition[] = [
-    { type: "custom", header: "", cellRenderer: v => unsafeHTML(`&#x${v}`), path: "icon" },
+    { type: "html", header: "", coerce: (v) => `&#x${v}`, path: "icon" },
     { type: "text", header: "Description", path: "description" },
     { type: "text", header: "Date", path: "date" },
-    { type: "text", header: "City", path: "address.city" },
-    { type: "number", header: "Price", path: "price", precision: 2, fixed: true, cellClasses: "price" },
-    { type: "number", header: "Rounded Price", path: "price", coerce: (v) => Math.round(v as number), precision: 2, fixed: true, cellClasses: "price" }
+    { type: "text", header: "City", path: "address.city", defaultValue: "none" },
+    { type: "number", header: "Price", path: "price", precision: 2, fixed: true, cellClasses: "price", cellStyle: priceBgColor, unit: "$" }
 ];
 
 @customElement("aster-simple-grid-demo")
@@ -23,9 +26,12 @@ export class SimpleGridDemo extends LitElement {
         .price {
             display: block;
             text-align: right;
-            color: red;
+            color: #fff;
+            font-weight: bold;
+            padding: 2px;
         }
     `;
+
     protected render(): unknown {
         return html`<aster-grid
             .dataSource=${data}

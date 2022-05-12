@@ -7,8 +7,10 @@ import { IGridCellRenderer } from "./igrid-cell-renderer";
 import { IGridRowRenderer } from "./igrid-row-renderer";
 import { IGridController } from "./igrid-controller";
 import { RenderResult } from "./render-result";
-import { itemValue } from "../item-value";
-import { GridDataItem } from "../column-definition";
+import { ColumnDefinition, GridDataItem } from "../column-definition";
+import { GridPropertyAccessorDelegate, IGridPropertyValueAccessor } from "./igrid-property-value-accessor";
+
+type DefinitionWithAccessor = readonly [ColumnDefinition, GridPropertyAccessorDelegate];
 
 @ServiceContract(IGridRowRenderer)
 export class GridRowRenderer implements IGridRowRenderer {
@@ -16,7 +18,8 @@ export class GridRowRenderer implements IGridRowRenderer {
 
     constructor(
         @IGridController private readonly _gridService: GridController,
-        @Many(IGridCellRenderer) cellRenderers: Iterable<IGridCellRenderer>
+        @Many(IGridCellRenderer) cellRenderers: Iterable<IGridCellRenderer>,
+        @IGridPropertyValueAccessor private readonly _accessor: IGridPropertyValueAccessor
     ) {
         this._cellRenderers = new Map();
         for (const cellRenderer of cellRenderers) {
@@ -25,28 +28,23 @@ export class GridRowRenderer implements IGridRowRenderer {
     }
 
     renderPage(items: readonly any[]): RenderResult {
-        return html`${repeat(items, x => this.render(x))}`
+        const definitions = this._gridService.columns.map(c => [c, this._accessor.resolveAccessor(c)] as const)
+        return html`${repeat(items, x => this.render(x, definitions))}`
     }
 
-    render(item: GridDataItem): RenderResult {
+    protected render(item: GridDataItem, definitions: DefinitionWithAccessor[]): RenderResult {
         if (item) {
-            return html`<tr>${this.renderCells(item)}</tr>`
+            return html`<tr>${this.renderCells(item, definitions)}</tr>`
         }
         return html``;
     }
 
-    protected *renderCells(item: GridDataItem): Iterable<HTMLTemplateResult> {
-        for (const column of this._gridService.columns) {
-            const renderer = this._cellRenderers.get(column.type ?? "text");
+    protected *renderCells(item: GridDataItem, definitions: DefinitionWithAccessor[]): Iterable<HTMLTemplateResult> {
+        for (const [def, acc] of definitions) {
+            const renderer = this._cellRenderers.get(def.type ?? "text");
             if (renderer) {
-                yield html`<td>
-                    <aster-grid-cell
-                        .item=${item}
-                        class="${itemValue(item, column.cellClasses)}"
-                        style="${itemValue(item, column.cellStyle)}">
-                        ${renderer.render(item, column)}
-                    </aster-grid-cell>
-                </td>`;
+                const value = acc(item);
+                yield html`<td>${renderer.render(value, item, def)}</td>`;
             }
         }
     }

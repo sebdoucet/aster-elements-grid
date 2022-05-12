@@ -6,5 +6,5 @@ export const IGridCellRenderer = ServiceIdentifier<IGridCellRenderer>("IGridCell
 
 export interface IGridCellRenderer {
     readonly name: string;
-    render(item: GridDataItem, definition: ColumnDefinition): RenderResult;
+    render(value: unknown, item: GridDataItem, definition: ColumnDefinition): RenderResult;
 }

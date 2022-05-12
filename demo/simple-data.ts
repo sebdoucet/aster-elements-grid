@@ -3,9 +3,6 @@ export default [
         "date": "2012-02-24",
         "description": "Step 1",
         "price": 12.2356,
-        "address": {
-            "city":"Lezay"
-        },
         "icon": "1F34C"
     },
     {
