@@ -52,7 +52,7 @@ export class GridController extends Disposable implements IGridController {
 
     protected renderTable(pageData: GridPageData): RenderResult {
         return html`
-            <table slot="table">
+            <table class="${this._grid.tableClass}" slot="table">
                 <thead>
                     ${this._colRenderer.renderHead()}
                 </thead>

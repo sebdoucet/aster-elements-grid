@@ -9,15 +9,13 @@ import { GridRowRenderer } from "./services/grid-row-renderer";
 import { IGridController } from "./services/igrid-controller";
 import { GridColRenderer } from "./services/grid-col-renderer";
 import { GridSourceService } from "./services/grid-source-service";
-import { DefaultGridCellRenderer } from "./cell-renderers/default-grid-cell-renderer";
-import { NumberGridCellRenderer } from "./cell-renderers/number-grid-cell-renderer";
 
 import { ColumnDefinition } from "./column-definition";
 import { GridPaginationService } from "./services/grid-pagination-service";
 import styles from "./grid.css";
 import { GridPropertyValueAccessor } from "./services/grid-property-value-accessor";
-import { CustomGridCellRenderer } from "./cell-renderers/custom-grid-cell-renderer";
-import { HtmlGridCellRenderer } from "./cell-renderers/html-grid-cell-renderer";
+import { GridDataTypes } from "./data-types";
+import { GridCellRenderers } from "./cell-renderers";
 
 @customElement("aster-grid")
 export class Grid extends LitElement implements IGrid {
@@ -36,6 +34,9 @@ export class Grid extends LitElement implements IGrid {
             this.onDidSourceChanged(oldValue);
         }
     }
+
+    @property({ type: String, attribute: "table-class" })
+    tableClass: string = "table";
 
     @property({ type: Number, attribute: true })
     page: number = 1;
@@ -85,13 +86,12 @@ export class Grid extends LitElement implements IGrid {
             .addSingleton(GridController, { delayed: true, baseArgs: [this] })
             .addSingleton(GridSourceService)
             .addSingleton(GridColRenderer)
-            .addSingleton(DefaultGridCellRenderer)
-            .addSingleton(NumberGridCellRenderer)
-            .addSingleton(HtmlGridCellRenderer)
-            .addSingleton(CustomGridCellRenderer)
             .addSingleton(GridRowRenderer)
             .addSingleton(GridPropertyValueAccessor)
             .addSingleton(GridPaginationService);
+
+        GridDataTypes.addDefault(services);
+        GridCellRenderers.addDefault(services);
     }
 
     protected update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {

@@ -1,12 +1,13 @@
 import { html } from "lit";
 import { ColumnDefinition, GridDataItem } from "../column-definition";
+import { ColumnType } from "../column-type";
 import { itemValue } from "../item-value";
-import { IGridCellRenderer } from "../services/igrid-cell-renderer";
+import { IGridCellRendererImpl } from "../services/igrid-cell-renderer";
 import { RenderResult } from "../services/render-result";
 
-export abstract class GridCellRenderer implements IGridCellRenderer {
+export abstract class GridCellRenderer implements IGridCellRendererImpl {
 
-    abstract readonly name: string;
+    static readonly types: readonly ColumnType[] = [];
 
     render(value: unknown, item: GridDataItem, definition: ColumnDefinition): RenderResult {
         return html`<aster-grid-cell

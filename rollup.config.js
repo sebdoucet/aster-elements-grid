@@ -5,7 +5,7 @@ import copy from "rollup-plugin-copy";
 
 export default [
     {
-        input: "lib/src/index.js",
+        input: "lib/index.js",
         output: [
             {
                 file: "lib/aster-grid.js",
@@ -21,7 +21,7 @@ export default [
             copy({
                 hook: "buildStart",
                 targets: [
-                    { src: "src/**/*.css", dest: "lib/src/" }
+                    { src: "src/**/*.css", dest: "lib/" }
                 ]
             })
         ]

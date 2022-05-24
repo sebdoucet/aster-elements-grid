@@ -1,6 +1,8 @@
 import { Tag } from "@aster-js/core";
-import { ServiceContract } from "@aster-js/ioc";
+import { Many, ServiceContract } from "@aster-js/ioc";
 import { ColumnDefinition, GridDataItem } from "../column-definition";
+import { ColumnType } from "../column-type";
+import { IGridDataType, IGridDataTypeImpl } from "./igrid-data-type";
 import { GridPropertyAccessorDelegate, IGridPropertyValueAccessor } from "./igrid-property-value-accessor";
 
 const AccessorTag = Tag.lazy<GridPropertyAccessorDelegate>("Accessor", (target: object) => {
@@ -23,18 +25,18 @@ const AccessorTag = Tag.lazy<GridPropertyAccessorDelegate>("Accessor", (target: 
 
 @ServiceContract(IGridPropertyValueAccessor)
 export class GridPropertyValueAccessor implements IGridPropertyValueAccessor {
+    private readonly _dataTypes: Map<ColumnType, IGridDataTypeImpl>;
+    private readonly _default: IGridDataTypeImpl;
+
+    constructor(@Many(IGridDataType) dataTypes: Iterable<IGridDataTypeImpl>) {
+        const entries = ColumnType.entries(dataTypes);
+        this._dataTypes = new Map(entries);
+        this._default = this._dataTypes.get("default")!;
+    }
+
     getValue(item: GridDataItem, definition: ColumnDefinition): unknown {
         const accessor = AccessorTag(definition);
-
-        const value = accessor(item);
-        if (typeof value === "undefined" || (value === null && definition.ignoreNull)) {
-            return definition.defaultValue;
-        }
-
-        if (definition.coerce) {
-            return definition.coerce(value, item, definition);
-        }
-        return value;
+        return this.getAccessorValue(item, definition, accessor);
     }
 
     resolveAccessor(definition: ColumnDefinition): GridPropertyAccessorDelegate {
@@ -44,13 +46,7 @@ export class GridPropertyValueAccessor implements IGridPropertyValueAccessor {
 
     protected getAccessorValue(item: GridDataItem, definition: ColumnDefinition, accessor: GridPropertyAccessorDelegate): unknown {
         const value = accessor(item);
-        if (typeof value === "undefined" || (value === null && definition.ignoreNull)) {
-            return definition.defaultValue;
-        }
-
-        if (definition.coerce) {
-            return definition.coerce(value, item, definition);
-        }
-        return value;
+        const dataType = this._dataTypes.get(definition.type) ?? this._default;
+        return dataType.coerce(value, item, definition);
     }
 }

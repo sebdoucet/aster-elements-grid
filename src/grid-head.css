@@ -1,0 +1,19 @@
+:host {
+    display: block;
+    cursor: pointer;
+    position: relative;
+}
+.content {
+    width: fit-content;
+    height: fit-content;
+}
+.actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none;
+}
+
+:host(:hover) .actions {
+    display: flex;
+}

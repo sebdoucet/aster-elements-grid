@@ -3,28 +3,27 @@ import { html, HTMLTemplateResult } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 
 import { GridController } from "./grid-controller";
-import { IGridCellRenderer } from "./igrid-cell-renderer";
+import { IGridCellRenderer, IGridCellRendererImpl } from "./igrid-cell-renderer";
 import { IGridRowRenderer } from "./igrid-row-renderer";
 import { IGridController } from "./igrid-controller";
 import { RenderResult } from "./render-result";
 import { ColumnDefinition, GridDataItem } from "../column-definition";
 import { GridPropertyAccessorDelegate, IGridPropertyValueAccessor } from "./igrid-property-value-accessor";
+import { ColumnType } from "../column-type";
 
 type DefinitionWithAccessor = readonly [ColumnDefinition, GridPropertyAccessorDelegate];
 
 @ServiceContract(IGridRowRenderer)
 export class GridRowRenderer implements IGridRowRenderer {
-    private readonly _cellRenderers: Map<string, IGridCellRenderer>;
+    private readonly _cellRenderers: Map<ColumnType, IGridCellRendererImpl>;
 
     constructor(
         @IGridController private readonly _gridService: GridController,
-        @Many(IGridCellRenderer) cellRenderers: Iterable<IGridCellRenderer>,
+        @Many(IGridCellRenderer) cellRenderers: Iterable<IGridCellRendererImpl>,
         @IGridPropertyValueAccessor private readonly _accessor: IGridPropertyValueAccessor
     ) {
-        this._cellRenderers = new Map();
-        for (const cellRenderer of cellRenderers) {
-            this._cellRenderers.set(cellRenderer.name, cellRenderer);
-        }
+        const entries = ColumnType.entries(cellRenderers);
+        this._cellRenderers = new Map(entries);
     }
 
     renderPage(items: readonly any[]): RenderResult {
@@ -41,10 +40,13 @@ export class GridRowRenderer implements IGridRowRenderer {
 
     protected *renderCells(item: GridDataItem, definitions: DefinitionWithAccessor[]): Iterable<HTMLTemplateResult> {
         for (const [def, acc] of definitions) {
-            const renderer = this._cellRenderers.get(def.type ?? "text");
+            const renderer = this._cellRenderers.get(def.type ?? "default");
             if (renderer) {
                 const value = acc(item);
                 yield html`<td>${renderer.render(value, item, def)}</td>`;
+            }
+            else {
+                yield html`<td></td>`;
             }
         }
     }

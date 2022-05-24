@@ -5,7 +5,7 @@ import { ColumnDefinition, GridDataItem } from "../src/column-definition";
 import data from "./simple-data";
 
 function priceBgColor({ price }: GridDataItem) {
-    const color = typeof price !== "number" ? "black": price > 100 ? "red" : price < 10 ? "green" : "orange";
+    const color = typeof price !== "number" ? "transparent" : price > 100 ? "#f003" : price < 10 ? "#0f03" : "#f1870e98";
     return `background-color:${color}`;
 }
 
@@ -21,7 +21,7 @@ const columns: ColumnDefinition[] = [
 export class SimpleGridDemo extends LitElement {
     static readonly styles = css`
         aster-grid {
-            width: 300px;
+            width: 700px;
         }
         .price {
             display: block;
@@ -33,10 +33,13 @@ export class SimpleGridDemo extends LitElement {
     `;
 
     protected render(): unknown {
-        return html`<aster-grid
-            .dataSource=${data}
+        return html`
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <aster-grid
+            table-class="table table-striped table-dark"
+            .dataSource=${[...data, ...data, ...data]}
             .columns=${columns}
-            .pageSize=${2}
+            .pageSize=${10}
             auto-load>
         </aster-grid>`;
     }
