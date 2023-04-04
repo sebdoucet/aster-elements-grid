@@ -17,7 +17,7 @@
         "strictNullChecks": true,
         "strictFunctionTypes": true,
         "strictPropertyInitialization": true,
-        "importsNotUsedAsValues": "error",
+        "verbatimModuleSyntax": true,
         "strictBindCallApply": true,
         "strict": true,
         "inlineSourceMap": true,

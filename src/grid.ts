@@ -1,21 +1,20 @@
-import { IIoCContainerBuilder, IIoCModule, IoCKernel, ServiceCollection } from "@aster-js/ioc";
+import { type IIoCContainerBuilder, type IIoCModule, IoCKernel, ServiceCollection } from "@aster-js/ioc";
 import { unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { GridService } from "./services/grid-service";
-import { asserts, IDisposable } from "@aster-js/core";
+import { IDisposable } from "@aster-js/core";
 import { dom } from "@aster-js/dom";
 import { DefaultGridCellRenderer } from "./cell-renderers/default-grid-cell-renderer";
-import { GridRowRenderer } from "./renderers/table/grid-row-renderer";
-import { IGrid } from "./abstraction/igrid";
+import { GridRenderer } from "./renderers/table/grid-renderer";
+import type { IGrid } from "./abstraction/igrid";
 
 import { IGridSourceService } from "./abstraction/igrid-source-service";
 import { GridSourceService } from "./services/grid-source-service";
 
-import { ColumnDefinition } from "./column-definition";
+import type { ColumnDefinition } from "./column-definition";
 import styles from "./grid.css";
 import { GridElement } from "./grid-element";
 import { GridElementEvent } from "./grid-event";
-import { IGridRenderer } from "./abstraction/igrid-renderer";
 import { IGridService } from "./abstraction/igrid-service";
 
 @customElement("aster-grid")
@@ -63,6 +62,7 @@ export class Grid extends GridElement implements IGrid {
         this._module = this.createModule(iocModule)
             .setup(IGridSourceService, x => x.setDataSource(this.dataSource))
             .build();
+        this._svc = this._module.services.get(IGridService, true);
     }
 
     private createModule(iocModule?: IIoCModule): IIoCContainerBuilder {
@@ -94,7 +94,7 @@ export class Grid extends GridElement implements IGrid {
             .tryAddSingleton(GridService, { baseArgs: [this] })
             .tryAddSingleton(GridSourceService)
             .tryAddSingleton(DefaultGridCellRenderer)
-            .tryAddSingleton(GridRowRenderer);
+            .tryAddSingleton(GridRenderer);
     }
 
     protected async onDidSourceChanged(oldValue: unknown): Promise<void> {
@@ -105,7 +105,7 @@ export class Grid extends GridElement implements IGrid {
     }
 
     protected render(): unknown {
-        if(this._svc){
+        if (this._svc) {
             return this._svc.render();
         }
     }

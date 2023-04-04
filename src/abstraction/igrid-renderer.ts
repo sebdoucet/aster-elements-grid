@@ -3,5 +3,5 @@ import { HTMLTemplateResult } from "lit";
 
 export const IGridRenderer = ServiceIdentifier<IGridRenderer>("IGridRenderer");
 export interface IGridRenderer {
-    render(item: unknown[]): unknown;
+    render(items: unknown[]): unknown;
 }

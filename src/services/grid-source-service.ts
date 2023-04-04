@@ -1,7 +1,8 @@
 import { EventEmitter, IEvent } from "@aster-js/events";
-import { ServiceContract } from "@aster-js/ioc";
+import { LogLevel, ServiceContract, ILogger } from "@aster-js/ioc";
 import { Iterables } from "@aster-js/iterators";
-import { IGridSourceService } from "./igrid-source-service";
+import { IGridSourceService } from "../abstraction/igrid-source-service";
+import type { GridFetchOptions } from "../gird-fetch-options";
 
 @ServiceContract(IGridSourceService)
 export class GridSourceService implements IGridSourceService {
@@ -13,8 +14,14 @@ export class GridSourceService implements IGridSourceService {
 
     get onDidDataSourceChange(): IEvent { return this._onDidDataSourceChange.event; }
 
-    getItems(skip: number, take: number): Promise<readonly any[]> {
+    constructor(@ILogger private readonly _logger: ILogger) { }
+
+    getItems({ skip, take, filters, sort }: GridFetchOptions): Promise<readonly any[]> {
+
+        if (filters.length) this._logger.log(LogLevel.warn, "");
+
         const items = this._items?.slice(skip, skip + take) ?? [];
+
         return Promise.resolve(items);
     }
 

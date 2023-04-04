@@ -1,12 +1,9 @@
-import { Func } from "@aster-js/core";
-import { HTMLTemplateResult } from "lit";
-
-
+import type { Func } from "@aster-js/core";
 
 export interface ColumnDefinition<T = any> {
     readonly type: string;
-    readonly header: HTMLTemplateResult;
-    readonly valuePredicate: Func<[T], HTMLTemplateResult>;
+    readonly header: Func<[], unknown>;
+    readonly valuePredicate: Func<[T], unknown>;
     readonly allowSorting?: boolean;
     readonly allowFilter: boolean;
     readonly allowEdit: boolean;
